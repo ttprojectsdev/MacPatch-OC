@@ -22,7 +22,7 @@
     // Update the view, if already loaded.
 }
 - (IBAction)testBtn:(NSButton *)sender {
-    _msgLbl.stringValue = @"Message: Looks good";
+    _msgLbl.stringValue = @"Message: Shizzle Ghizngar";
 }
 
 @end
