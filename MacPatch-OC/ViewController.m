@@ -21,5 +21,8 @@
 
     // Update the view, if already loaded.
 }
+- (IBAction)testBtn:(NSButton *)sender {
+    _msgLbl.stringValue = @"Message: Looks good";
+}
 
 @end
