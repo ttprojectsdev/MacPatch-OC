@@ -7,13 +7,13 @@
 //
 
 #import "ViewController.h"
-
+#import "Person.h"
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Do any additional setup after loading the view.
+    
 }
 
 - (void)setRepresentedObject:(id)representedObject {
@@ -22,7 +22,9 @@
     // Update the view, if already loaded.
 }
 - (IBAction)testBtn:(NSButton *)sender {
-    _msgLbl.stringValue = @"Message: Shizzle Ghizngar";
+    Person *william = [[Person alloc] initWithAge:18 andName:@"William2"];
+    _msgLbl.stringValue = [william printName];
+
 }
 
 @end
