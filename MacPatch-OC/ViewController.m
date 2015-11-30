@@ -44,29 +44,6 @@ BOOL foundDisc = false;
 //***************************************
 
 
-
-//***************************************
-//FUNCTION: Load global vars
-//***************************************
-void loadVars(){
-    /*//initializes task's path and arguments
-    let task = NSTask()
-    task.launchPath = bashPath as String
-    task.arguments = [admin_sh_path as String]
-    
-    //initializes pipe to carry the variable from the shell script to swift
-    //runs the shell script
-    let pipe = NSPipe()
-    task.standardOutput = pipe
-    task.launch()
-    
-    //initalize variables
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()//carries variable from shell script to swift
-    let admin_sh_output = NSString(data: data, encoding: NSUTF8StringEncoding) as! String//converts data to string
-    admin_check = admin_sh_output.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())*/
-}
-//***************************************
-
 //***************************************
 //FUNCTION: Calls the loading of Math data
 //and checks if disc can be found
@@ -90,129 +67,125 @@ BOOL checkMathDisc(){
 
 //***************************************
 //FUNCTION: Load math level data
-//***************************************
-NSString *loadMathData() {
+void loadMathData() {
     NSFileManager *filemanager = [NSFileManager defaultManager];
     NSArray *keys;
     keys = @[NSURLVolumeNameKey, NSURLVolumeIsRemovableKey, NSURLVolumeIsEjectableKey];
     NSArray *paths;
-    paths = [[NSFileManager defaultManager] mountedVolumeURLsIncludingResourceValuesForKeys:keys options:0];
+    paths = [filemanager mountedVolumeURLsIncludingResourceValuesForKeys:keys options:0];
 
     for (NSURL *item in paths) {
+        NSLog(@"in first for");
         NSArray *components = item.pathComponents ;
         if (components.count > 1 && [components[1]  isEqualToString: @"Volumes"]) {
+            NSLog(@"in first if");
                 for (NSString *index in mLevel ){
-                    if (item.path isEqualToString:(disc_prefix + index)) {
-                        switch index {
-                        case "Math3-1":
-                            mLevel_name = "Math 3";
-                            mLevel_alias = "Math3";
-                            mLevel_disc = "Math3-1";
-                            mLevel_app_folder = "Math 3";
-                            mLevel_app = "Math3.app";
-                            mLevel_data_folder = "TT Math 3";
-                            mLevel_dat_file = "math3dat";
-                            mLevel_zip_file = "ttmath3mac.zip";
+                    NSString *discPath = [NSString stringWithFormat:@"%@%@",disc_prefix,index];
+                    NSLog(@"in second for");
+                    if ([item.path isEqualToString: discPath]) {
+                        NSLog(@"in second if");
+                        if ([index isEqualToString:@"Math3-1?"]){
+                            mLevel_name = @"Math 3";
+                            mLevel_alias = @"Math3";
+                            mLevel_disc = @"Math3-1";
+                            mLevel_app_folder = @"Math 3";
+                            mLevel_app = @"Math3.app";
+                            mLevel_data_folder = @"TT Math 3";
+                            mLevel_dat_file = @"math3dat";
+                            mLevel_zip_file = @"ttmath3mac.zip";
                             foundDisc = true;
-                            break;
-                        case "Math4-1":
-                            mLevel_name = "Math 4";
-                            mLevel_alias = "Math4";
-                            mLevel_disc = "Math4-1";
-                            mLevel_app_folder = "Math 4";
-                            mLevel_app = "Math4.app";
-                            mLevel_data_folder = "TT Math 4";
-                            mLevel_dat_file = "math4dat";
-                            mLevel_zip_file = "ttmath4mac.zip";
+                        } else if([index isEqualToString:@"Math4-1"]){
+                            NSLog(@"in 'Switch' statement");
+                            mLevel_name = @"Math 4";
+                            mLevel_alias = @"Math4";
+                            mLevel_disc = @"Math4-1";
+                            mLevel_app_folder = @"Math 4";
+                            mLevel_app = @"Math4.app";
+                            mLevel_data_folder = @"TT Math 4";
+                            mLevel_dat_file = @"math4dat";
+                            mLevel_zip_file = @"ttmath4mac.zip";
                             foundDisc = true;
-                            break;
-                        case "Math5-1":
-                            mLevel_name = "Math 5";
-                            mLevel_alias = "Math5";
-                            mLevel_disc = "Math5-1";
-                            mLevel_app_folder = "Math 5";
-                            mLevel_app = "Math5.app";
-                            mLevel_data_folder = "TT Math 5";
-                            mLevel_dat_file = "math5dat";
-                            mLevel_zip_file = "ttmath5mac.zip";
+                        } else if([index isEqualToString:@"Math5-1"]){
+                            mLevel_name = @"Math 5";
+                            mLevel_alias = @"Math5";
+                            mLevel_disc = @"Math5-1";
+                            mLevel_app_folder = @"Math 5";
+                            mLevel_app = @"Math5.app";
+                            mLevel_data_folder = @"TT Math 5";
+                            mLevel_dat_file = @"math5dat";
+                            mLevel_zip_file = @"ttmath5mac.zip";
                             foundDisc = true;
-                            break;
-                        case "Math6-1":
-                            mLevel_name = "Math 6"
-                            mLevel_alias = "Math6"
-                            mLevel_disc = "Math6-1"
-                            mLevel_app_folder = "Math 6"
-                            mLevel_app = "Math6.app"
-                            mLevel_data_folder = "TT Math 6"
-                            mLevel_dat_file = "math6dat"
-                            mLevel_zip_file = "ttmath6mac.zip"
-                            foundDisc = true
-                            break
-                        case "Math7-1":
-                            mLevel_name = "Math 7"
-                            mLevel_alias = "Math7"
-                            mLevel_disc = "Math7-1"
-                            mLevel_app_folder = "Math 7"
-                            mLevel_app = "Math7.app"
-                            mLevel_data_folder = "TT Math 7"
-                            mLevel_dat_file = "math7dat"
-                            mLevel_zip_file = "ttmath7mac.zip"
-                            foundDisc = true
-                            break
-                        case "PreAlg-1":
-                            mLevel_name = "Pre-Algebra"
-                            mLevel_alias = "Pre-Algebra"
-                            mLevel_disc = "PreAlg-1"
-                            mLevel_app_folder = "Pre-Algebra"
-                            mLevel_app = "Pre-Algebra.app"
-                            mLevel_data_folder = "TT Pre-Algebra"
-                            mLevel_dat_file = "prealgebradat"
-                            mLevel_zip_file = "ttprealgebramac.zip"
-                            foundDisc = true
-                            break
-                        case "Alg1-1":
-                            mLevel_name = "Algebra 1"
-                            mLevel_alias = "Algebra1"
-                            mLevel_disc = "Algebra1-1"
-                            mLevel_app_folder = "Algebra 1"
-                            mLevel_app = "Algebra1.app"
-                            mLevel_data_folder = "TT Algebra 1"
-                            mLevel_dat_file = "algebra1dat"
-                            mLevel_zip_file = "ttalgebra1mac.zip"
-                            foundDisc = true
-                            break
-                        case "Alg2-1":
-                            mLevel_name = "Algebra 2"
-                            mLevel_alias = "Algebra2"
-                            mLevel_disc = "Algebra2-1"
-                            mLevel_app_folder = "Algebra 2"
-                            mLevel_app = "Algebra2.app"
-                            mLevel_data_folder = "TT Algebra 2"
-                            mLevel_dat_file = "algebra2dat"
-                            mLevel_zip_file = "ttalgebra2mac.zip"
-                            foundDisc = true
-                            break
-                        case "Geom-1":
-                            mLevel_name = "Geometry"
-                            mLevel_alias = "Geometry"
-                            mLevel_disc = "Geom-1"
-                            mLevel_app_folder = "Geometry"
-                            mLevel_app = "Geometry.app"
-                            mLevel_data_folder = "TT Geometry"
-                            mLevel_dat_file = "geometrydat"
-                            mLevel_zip_file = "ttgeometrymac.zip"
-                            foundDisc = true
-                            break
-                        default: foundDisc = false
-                        }//end switch
+                        }else if([index isEqualToString:@"Math6-1"]){
+                            mLevel_name = @"Math 6";
+                            mLevel_alias = @"Math6";
+                            mLevel_disc = @"Math6-1";
+                            mLevel_app_folder = @"Math 6";
+                            mLevel_app = @"Math6.app";
+                            mLevel_data_folder = @"TT Math 6";
+                            mLevel_dat_file = @"math6dat";
+                            mLevel_zip_file = @"ttmath6mac.zip";
+                                foundDisc = true;
+                        }else if([index isEqualToString:@"Math7-1"]){
+                            mLevel_name = @"Math 7";
+                            mLevel_alias = @"Math7";
+                            mLevel_disc = @"Math7-1";
+                            mLevel_app_folder = @"Math 7";
+                            mLevel_app = @"Math7.app";
+                            mLevel_data_folder = @"TT Math 7";
+                            mLevel_dat_file = @"math7dat";
+                            mLevel_zip_file = @"ttmath7mac.zip";
+                                foundDisc = true;
+                        } else if([index isEqualToString:@"Pre-Alg"]){
+                            mLevel_name = @"Pre-Algebra";
+                            mLevel_alias = @"Pre-Algebra";
+                            mLevel_disc = @"PreAlg-1";
+                            mLevel_app_folder = @"Pre-Algebra";
+                            mLevel_app = @"Pre-Algebra.app";
+                            mLevel_data_folder = @"TT Pre-Algebra";
+                            mLevel_dat_file = @"prealgebradat";
+                            mLevel_zip_file = @"ttprealgebramac.zip";
+                        }else if([index isEqualToString:@"Alg1-1"]){
+                            mLevel_name = @"Algebra 1";
+                            mLevel_alias = @"Algebra1";
+                            mLevel_disc = @"Algebra1-1";
+                            mLevel_app_folder = @"Algebra 1";
+                            mLevel_app = @"Algebra1.app";
+                            mLevel_data_folder = @"TT Algebra 1";
+                            mLevel_dat_file = @"algebra1dat";
+                            mLevel_zip_file = @"ttalgebra1mac.zip";
+                                foundDisc = true;
+                                break;
+                        }else if([index isEqualToString:@"Alg2-1"]){
+                            mLevel_name = @"Algebra 2";
+                            mLevel_alias = @"Algebra2";
+                            mLevel_disc = @"Algebra2-1";
+                            mLevel_app_folder = @"Algebra 2";
+                            mLevel_app = @"Algebra2.app";
+                            mLevel_data_folder = @"TT Algebra 2";
+                            mLevel_dat_file = @"algebra2dat";
+                            mLevel_zip_file = @"ttalgebra2mac.zip";
+                        }else if ([index isEqualToString:@"Geom-1"]){
+                            mLevel_name = @"Geometry";
+                            mLevel_alias = @"Geometry";
+                            mLevel_disc = @"Geom-1";
+                            mLevel_app_folder = @"Geometry";
+                            mLevel_app = @"Geometry.app";
+                            mLevel_data_folder = @"TT Geometry";
+                            mLevel_dat_file = @"geometrydat";
+                            mLevel_zip_file = @"ttgeometrymac.zip";
+                                foundDisc = true;
+                        }//end if
                     }//end if
                 }//end for
-            }//end where
+            }//end if
     }//end for
 }//end math level data function
 //***************************************
 
 
+//***************************************
+//FUNCTION- view did load
+//***************************************
 - (void)viewDidLoad {
     [super viewDidLoad];
     //***************************************
@@ -237,11 +210,6 @@ NSString *loadMathData() {
     //***************************************
     //Admin Check
     //***************************************
-    
-    //Example of string concat
-    // objLbl.stringValue = [NSString stringWithFormat:@"%@/%@/%@", @"Message: ", @"combined with - ", objTxt.stringValue];
-    
-    
     NSTask *scriptTask = [[NSTask alloc] init]; //Initalize NSTask object
     NSPipe *pipe; //Initalize NSPipe for returning shell script output
     pipe = [NSPipe pipe];
@@ -264,15 +232,19 @@ NSString *loadMathData() {
     } else {
         showSimpleCriticalAlert(@"Admin Check", @"You're an admin!", false);
     }
+}//end view did load
+//***************************************
 
-}
 
+//***************************************
+//BUTTON
+//***************************************
 - (IBAction)testBtn:(NSButton *)sender {
-    _msgLbl.stringValue = player_path;
-    
-    
-    
-}
+    loadMathData();
+    NSLog(@"%@", mLevel_dat_file);
+}//end testBtn
+//***************************************
+
 
 //***************************************
 //FUNCTION: Display alert message
@@ -286,9 +258,8 @@ void showSimpleCriticalAlert(NSString *title, NSString *msg,bool exitApp) {
     [alert runModal];
     if (exitApp) {
         [[NSApplication sharedApplication] terminate:nil];
-    }
-}
-
-
+    }//end if
+}//end showsimplecirticalalert
+//***************************************
 
 @end
