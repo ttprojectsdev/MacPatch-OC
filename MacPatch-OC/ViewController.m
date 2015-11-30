@@ -75,15 +75,11 @@ void loadMathData() {
     paths = [filemanager mountedVolumeURLsIncludingResourceValuesForKeys:keys options:0];
 
     for (NSURL *item in paths) {
-        NSLog(@"in first for");
         NSArray *components = item.pathComponents ;
         if (components.count > 1 && [components[1]  isEqualToString: @"Volumes"]) {
-            NSLog(@"in first if");
                 for (NSString *index in mLevel ){
                     NSString *discPath = [NSString stringWithFormat:@"%@%@",disc_prefix,index];
-                    NSLog(@"in second for");
                     if ([item.path isEqualToString: discPath]) {
-                        NSLog(@"in second if");
                         if ([index isEqualToString:@"Math3-1?"]){
                             mLevel_name = @"Math 3";
                             mLevel_alias = @"Math3";
@@ -95,7 +91,6 @@ void loadMathData() {
                             mLevel_zip_file = @"ttmath3mac.zip";
                             foundDisc = true;
                         } else if([index isEqualToString:@"Math4-1"]){
-                            NSLog(@"in 'Switch' statement");
                             mLevel_name = @"Math 4";
                             mLevel_alias = @"Math4";
                             mLevel_disc = @"Math4-1";
