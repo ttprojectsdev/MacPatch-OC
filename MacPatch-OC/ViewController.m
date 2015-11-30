@@ -22,17 +22,17 @@ NSString *disc_prefix; //prefix to locate disc in drive
 NSString *bashPath; //Scripts are ran using bash
 NSString *dataPath; //Path to data folders
 NSArray *mLevel; //array of expected math level disc 1 volumes
+NSString *patchID = @"Math 4";//identifies the settings update
 bool isAdmin = false; //Admin check bool
 //***************************************
 
 //***************************************
 //Define Variables for paths
 //***************************************
-NSString *admin_sh_path; //Path to shell script that checks admin
 NSString *install_sh_path; //Path to shell script that unzips application files
 NSString *plugin_path; //Path to flash player plugin resource
 NSString *player_path; //Path something to mdm_flash_player
-NSString *admin_check; //Current user is admin, returns the username. If not admin returns a "0"
+NSString *admin_name; //If admin, holds admin user name
 //***************************************
 
 //***************************************
@@ -51,6 +51,64 @@ BOOL foundDisc = false;
 
 
 //***************************************
+//VIEW DID LOAD
+//***************************************
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    //***************************************
+    //Fill Constants
+    //***************************************
+    disc_prefix = @"/Volumes/"; //prefix to locate disc in drive
+    bashPath = @"/bin/bash"; //Scripts are ran using bash
+    dataPath = @"/Users/Shared/"; //Path to data folders
+    mLevel = @[@"Math3-1", @"Math4-1", @"Math5-1", @"Math6-1", @"Math7-1", @"PreAlg-1", @"Alg1-1", @"Alg2-1", @"Geom-1"];
+    //***************************************
+    
+    //***************************************
+    //Define Variables for paths
+    //***************************************
+    install_sh_path = [[NSBundle mainBundle] pathForResource:@"cmd2" ofType:@"sh"]; //Path to shell script that unzips application files
+    plugin_path = [[NSBundle mainBundle] pathForResource:@"Flash Player" ofType:@"plugin"]; //Path to flash player plugin resource
+    player_path = [[NSBundle mainBundle] pathForResource:@"mdm_flash_player" ofType:@""]; //Path something to mdm_flash_player
+    //***************************************
+    
+    //***************************************
+    //Admin Check
+    //***************************************
+    uid_t current_user_id = getuid(); //Gets the user ID
+    struct passwd *pwentry = getpwuid(current_user_id); //Gets PWD of user
+    struct group *admin_group = getgrnam("admin"); //Sets group to check for
+    while(*admin_group->gr_mem != NULL) { //Loop through groups until end
+        if (strcmp(pwentry->pw_name, *admin_group->gr_mem) == 0) {
+            isAdmin = true; //if admin is listed, set boolean to true
+            admin_name = [NSString stringWithFormat:@"%s", pwentry->pw_name];
+        }//end if
+        admin_group->gr_mem++;
+    }//end while
+    
+    //Checks isAdmin to validate admin group
+    if (isAdmin) {
+        loadMathData();
+        _MathLevelLabel.stringValue = mLevel_name;
+        if ([mLevel_name isEqualToString:patchID]) {
+            _SettingsUpdateBtn.enabled = true;
+            _settingsUpdateLabel.stringValue = @"Settings update patch is available for this math level!";
+        } else {
+            _SettingsUpdateBtn.enabled = false;
+            _settingsUpdateLabel.stringValue = @"Settings update is not available for this math level. Please download the correct patch from our website http://www.teachingtextbooks.com/updates";
+        }
+        
+    } else {
+        showSimpleCriticalAlert(@"Admin Check", @"This can only be run from an administrator account!", true);//admin not logged in
+    }//end if
+    //***************************************
+    
+    
+}//end view did load
+//***************************************
+
+
+//***************************************
 //FUNCTION: Calls the loading of Math data
 //and checks if disc can be found
 //RETURNS: BOOLEAN
@@ -60,7 +118,7 @@ BOOL foundDisc = false;
 BOOL checkMathDisc(){
     BOOL reslut = false;
     
-    loadMathData();//LOAD MATH DATA WILL BE OTHER FUNCTION COMING FROM GLOBAL VARS!!!
+    loadMathData();
     if (foundDisc) {
         reslut = true;
     } else {
@@ -86,7 +144,7 @@ void loadMathData() {
                 for (NSString *index in mLevel ){
                     NSString *discPath = [NSString stringWithFormat:@"%@%@",disc_prefix,index];
                     if ([item.path isEqualToString: discPath]) {
-                        if ([index isEqualToString:@"Math3-1?"]){
+                        if ([index isEqualToString:@"Math3-1"]){
                             mLevel_name = @"Math 3";
                             mLevel_alias = @"Math3";
                             mLevel_disc = @"Math3-1";
@@ -185,62 +243,38 @@ void loadMathData() {
 
 
 //***************************************
-//FUNCTION- view did load
+//BUTTON
 //***************************************
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    //***************************************
-    //Fill Constants
-    //***************************************
-    disc_prefix = @"/Volumes/"; //prefix to locate disc in drive
-    bashPath = @"/bin/bash"; //Scripts are ran using bash
-    dataPath = @"/Users/Shared/"; //Path to data folders
-    mLevel = @[@"Math3-1", @"Math4-1", @"Math5-1", @"Math6-1", @"Math7-1", @"PreAlg-1", @"Alg1-1", @"Alg2-1", @"Geom-1"];
-    //***************************************
-    
-    //***************************************
-    //Define Variables for paths
-    //***************************************
-    install_sh_path = [[NSBundle mainBundle] pathForResource:@"cmd2" ofType:@"sh"]; //Path to shell script that unzips application files
-    plugin_path = [[NSBundle mainBundle] pathForResource:@"Flash Player" ofType:@"plugin"]; //Path to flash player plugin resource
-    player_path = [[NSBundle mainBundle] pathForResource:@"mdm_flash_player" ofType:@""]; //Path something to mdm_flash_player
-    //***************************************
-    
-    //***************************************
-    //Admin Check
-    //***************************************
-    uid_t current_user_id = getuid(); //Gets the user ID
-    struct passwd *pwentry = getpwuid(current_user_id); //Gets PWD of user
-    //struct group *grentry = getgrgid(getgid()); //Gets groups the user is a part of
-    //printf("My Current Group Name is %s\n", grentry->gr_name);
-    
-    struct group *admin_group = getgrnam("admin"); //Sets group to check for
-    while(*admin_group->gr_mem != NULL) { //Loop through groups until end
-        if (strcmp(pwentry->pw_name, *admin_group->gr_mem) == 0) {
-            isAdmin = true; //if admin is listed, set boolean to true
-        }
-        admin_group->gr_mem++;
-    }
-    
-    //Checks isAdmin to validate admin group
-    if (isAdmin) {
-        showSimpleCriticalAlert(@"Admin Check", @"You're an admin!", false);//Admin logged in
-    } else {
-        showSimpleCriticalAlert(@"Admin Check", @"This can only be run from an administrator account!", true);//admin not logged in
-    }
-    //***************************************
-
-}//end view did load
+- (IBAction)testBtn:(NSButton *)sender {
+    cleanInstall();
+    installFromDisc1();
+}//end testBtn
 //***************************************
 
 
 //***************************************
 //BUTTON
 //***************************************
-- (IBAction)testBtn:(NSButton *)sender {
+- (IBAction)recheckBtn:(NSButton *)sender {
     loadMathData();
-    NSLog(@"%@", mLevel_dat_file);
-}//end testBtn
+    _MathLevelLabel.stringValue = mLevel_name;
+    if ([mLevel_name isEqualToString:patchID]) {
+        _SettingsUpdateBtn.enabled = true;
+        _settingsUpdateLabel.stringValue = @"Settings update patch is available for this math level!";
+    } else {
+        _SettingsUpdateBtn.enabled = false;
+        _settingsUpdateLabel.stringValue = @"Settings update is not available for this math level. Please download the correct patch from our website http://www.teachingtextbooks.com/updates";
+    }
+}
+//***************************************
+
+
+//***************************************
+//BUTTON
+//***************************************
+- (IBAction)SettingsUpdateBtn:(NSButton *)sender {
+    
+}
 //***************************************
 
 
@@ -260,4 +294,52 @@ void showSimpleCriticalAlert(NSString *title, NSString *msg,bool exitApp) {
 }//end showsimplecirticalalert
 //***************************************
 
+
+//****************************************
+//FUNCTION: Cleans all applications and folders
+//associated with previous istalls that may
+//be corrupt or misplaced
+//****************************************
+//function looks in four common locations where icons are placed and removes them from the computer in preparation for the install
+void cleanInstall(){
+    NSFileManager *filemanager = [NSFileManager defaultManager];
+    NSArray *mathTargets = @[mLevel_app, mLevel_app_folder, mLevel_name, mLevel_alias];
+    NSString *pathToUser = [NSString stringWithFormat:@"%@%@", @"/Users/", admin_name];
+    NSString *pathToDownloads = [NSString stringWithFormat:@"%@%@", pathToUser, @"/Downloads/"];
+    NSString *pathToDesktop = [NSString stringWithFormat:@"%@%@", pathToUser, @"/Desktop/"];
+    NSArray *pathArray = @[pathToDownloads, pathToDesktop, @"/Applications/",@"/Applications/Teaching Textbooks/"];
+    for (NSString *path in pathArray) {
+        NSArray *path_data = [filemanager contentsOfDirectoryAtPath:path error:nil];
+        if (path_data != nil) {
+            for (NSString *files in path_data){
+                for (NSString *mathTarget in mathTargets) {
+                    if ([mathTarget isEqualToString:files]) {
+                        NSString *appPath = [NSString stringWithFormat:@"%@%@",path,mathTarget];
+                        //NSString *aliasPath = [NSString stringWithFormat:@"%@%@",path,alias];
+                        [filemanager removeItemAtPath:appPath error:nil];
+                      //  [filemanager removeItemAtPath:aliasPath error:nil];
+                    }//end if
+                }//end for
+            }//end for
+        }//end if
+    }//end for
+}//end cleanInstall
+//****************************************
+
+
+//****************************************
+//FUNCTION: Automates the install process
+//using disc 1 resources (TODO: Find ways to possible download missing, dammaged, or updated files
+//****************************************
+//manually installs the mac.zip file from the cd
+void installFromDisc1() {
+    NSTask *installTask = [[NSTask alloc] init];
+    NSString *discZipFile = [NSString stringWithFormat:@"%@%@%@%@",@"/Volumes/",mLevel_disc, @"/", mLevel_zip_file];
+   
+    [installTask setLaunchPath: @"/bin/bash"];
+    [installTask setArguments: @[install_sh_path, discZipFile, mLevel_app_folder, mLevel_app, mLevel_alias]];
+    [installTask launch];
+    [installTask waitUntilExit];
+}//end installFromDisc1
+//****************************************
 @end

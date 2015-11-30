@@ -7,4 +7,4 @@
 #  Copyright © 2015 Chris Conley. All rights reserved.
 
 unzip -q -o "$1" -d /Applications/
-ln -s "/Applications/Teaching Textbooks/$2" ~/Desktop/
+ln -s "/Applications/Teaching Textbooks/$2/$3" ~/Desktop/$4

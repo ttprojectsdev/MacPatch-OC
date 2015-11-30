@@ -8,10 +8,16 @@
 
 #import <Cocoa/Cocoa.h>
 
+
 @interface ViewController : NSViewController
 
-@property (weak) IBOutlet NSTextField *msgLbl;
+@property (weak) IBOutlet NSTextField *MathLevelLabel;
 
+@property (weak) IBOutlet NSTextField *settingsUpdateLabel;
+
+@property (weak) IBOutlet NSProgressIndicator *progressBar;
+
+@property (weak) IBOutlet NSButton *SettingsUpdateBtn;
 
 @end
 
