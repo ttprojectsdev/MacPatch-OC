@@ -13,7 +13,6 @@
 		0A3017CE1C062A9800DBB93A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A3017CD1C062A9800DBB93A /* Assets.xcassets */; };
 		0A3017D11C062A9800DBB93A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A3017CF1C062A9800DBB93A /* Main.storyboard */; };
 		42270E331C063D090047FBEA /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 42270E321C063D090047FBEA /* Person.m */; };
-		4234778D1C065CCA00B156C3 /* cmd.sh in Resources */ = {isa = PBXBuildFile; fileRef = 4234778C1C065CCA00B156C3 /* cmd.sh */; };
 		4234778F1C065FE500B156C3 /* cmd2.sh in Resources */ = {isa = PBXBuildFile; fileRef = 4234778E1C065FE500B156C3 /* cmd2.sh */; };
 		423477911C065FFE00B156C3 /* Flash Player.plugin in Resources */ = {isa = PBXBuildFile; fileRef = 423477901C065FFE00B156C3 /* Flash Player.plugin */; };
 		423477931C06600F00B156C3 /* ttmath4mac.zip in Resources */ = {isa = PBXBuildFile; fileRef = 423477921C06600F00B156C3 /* ttmath4mac.zip */; };
@@ -32,7 +31,6 @@
 		0A3017D21C062A9800DBB93A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		42270E311C063D090047FBEA /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		42270E321C063D090047FBEA /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
-		4234778C1C065CCA00B156C3 /* cmd.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = cmd.sh; sourceTree = "<group>"; };
 		4234778E1C065FE500B156C3 /* cmd2.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = cmd2.sh; sourceTree = "<group>"; };
 		423477901C065FFE00B156C3 /* Flash Player.plugin */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = "Flash Player.plugin"; sourceTree = "<group>"; };
 		423477921C06600F00B156C3 /* ttmath4mac.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = ttmath4mac.zip; sourceTree = "<group>"; };
@@ -57,7 +55,6 @@
 				423477921C06600F00B156C3 /* ttmath4mac.zip */,
 				423477901C065FFE00B156C3 /* Flash Player.plugin */,
 				4234778E1C065FE500B156C3 /* cmd2.sh */,
-				4234778C1C065CCA00B156C3 /* cmd.sh */,
 				0A3017C31C062A9800DBB93A /* MacPatch-OC */,
 				0A3017C21C062A9800DBB93A /* Products */,
 			);
@@ -157,7 +154,6 @@
 				423477931C06600F00B156C3 /* ttmath4mac.zip in Resources */,
 				423477911C065FFE00B156C3 /* Flash Player.plugin in Resources */,
 				4234778F1C065FE500B156C3 /* cmd2.sh in Resources */,
-				4234778D1C065CCA00B156C3 /* cmd.sh in Resources */,
 				0A3017CE1C062A9800DBB93A /* Assets.xcassets in Resources */,
 				0A3017D11C062A9800DBB93A /* Main.storyboard in Resources */,
 			);

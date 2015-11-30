@@ -7,7 +7,12 @@
 //
 
 #import "ViewController.h"
-
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <strings.h>
+#include <pwd.h>
+#include <grp.h>
 @implementation ViewController
 
 //***************************************
@@ -17,6 +22,7 @@ NSString *disc_prefix; //prefix to locate disc in drive
 NSString *bashPath; //Scripts are ran using bash
 NSString *dataPath; //Path to data folders
 NSArray *mLevel; //array of expected math level disc 1 volumes
+bool isAdmin = false; //Admin check bool
 //***************************************
 
 //***************************************
@@ -195,38 +201,35 @@ void loadMathData() {
     //***************************************
     //Define Variables for paths
     //***************************************
-    admin_sh_path = [[NSBundle mainBundle] pathForResource:@"cmd" ofType:@"sh"]; //Path to shell script that checks admin
     install_sh_path = [[NSBundle mainBundle] pathForResource:@"cmd2" ofType:@"sh"]; //Path to shell script that unzips application files
     plugin_path = [[NSBundle mainBundle] pathForResource:@"Flash Player" ofType:@"plugin"]; //Path to flash player plugin resource
     player_path = [[NSBundle mainBundle] pathForResource:@"mdm_flash_player" ofType:@""]; //Path something to mdm_flash_player
-    //admin_check; //Current user is admin, returns the username. If not admin returns a "0"
     //***************************************
     
     //***************************************
     //Admin Check
     //***************************************
-    NSTask *scriptTask = [[NSTask alloc] init]; //Initalize NSTask object
-    NSPipe *pipe; //Initalize NSPipe for returning shell script output
-    pipe = [NSPipe pipe];
-    [scriptTask setStandardOutput: pipe]; //Setting output to come from pipe object
-    [scriptTask setStandardError: pipe]; //Setting error output to come from pipe object
-    NSFileHandle *file; //Create file handle object to read from pipe
-    file = [pipe fileHandleForReading]; //Assign file object to pipe for reading
-    [scriptTask setLaunchPath: @"/bin/bash"]; //Set script launch path
-    [scriptTask setArguments:@[admin_sh_path]]; //Set arguments for script. Only require script path for this one
+    uid_t current_user_id = getuid(); //Gets the user ID
+    struct passwd *pwentry = getpwuid(current_user_id); //Gets PWD of user
+    //struct group *grentry = getgrgid(getgid()); //Gets groups the user is a part of
+    //printf("My Current Group Name is %s\n", grentry->gr_name);
     
-    [scriptTask launch]; //Lanuches task
-    NSData *data; //Initalizes data object to hold output from shell script
-    data = [file readDataToEndOfFile]; //Use file object to read to end of pipe file
-    NSString *string_output; //Create output string
-    string_output = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding]; //Fill output string with data
-    NSString *string_trimmed = [string_output stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]]; //Trim string to remove newline character set
-    
-    if ([string_trimmed  isEqual: @"0"]) {
-        showSimpleCriticalAlert(@"Admin Check", @"This can only be run from an administrator account!", true);
-    } else {
-        showSimpleCriticalAlert(@"Admin Check", @"You're an admin!", false);
+    struct group *admin_group = getgrnam("admin"); //Sets group to check for
+    while(*admin_group->gr_mem != NULL) { //Loop through groups until end
+        if (strcmp(pwentry->pw_name, *admin_group->gr_mem) == 0) {
+            isAdmin = true; //if admin is listed, set boolean to true
+        }
+        admin_group->gr_mem++;
     }
+    
+    //Checks isAdmin to validate admin group
+    if (isAdmin) {
+        showSimpleCriticalAlert(@"Admin Check", @"You're an admin!", false);//Admin logged in
+    } else {
+        showSimpleCriticalAlert(@"Admin Check", @"This can only be run from an administrator account!", true);//admin not logged in
+    }
+    //***************************************
+
 }//end view did load
 //***************************************
 
