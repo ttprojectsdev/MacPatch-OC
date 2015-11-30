@@ -92,49 +92,51 @@ BOOL checkMathDisc(){
 //FUNCTION: Load math level data
 //***************************************
 NSString *loadMathData() {
-    let filemanager = NSFileManager()
-    let keys = [NSURLVolumeNameKey, NSURLVolumeIsRemovableKey, NSURLVolumeIsEjectableKey]
-    let paths = filemanager.mountedVolumeURLsIncludingResourceValuesForKeys(keys, options: [])
-    
-    for item in paths! {
-        if let components = item.pathComponents
-            where components.count > 1 && components[1] == "Volumes" {
-                for index in mLevel {
-                    if (item.path! == (disc_prefix + index)) {
+    NSFileManager *filemanager = [NSFileManager defaultManager];
+    NSArray *keys;
+    keys = @[NSURLVolumeNameKey, NSURLVolumeIsRemovableKey, NSURLVolumeIsEjectableKey];
+    NSArray *paths;
+    paths = [[NSFileManager defaultManager] mountedVolumeURLsIncludingResourceValuesForKeys:keys options:0];
+
+    for (NSURL *item in paths) {
+        NSArray *components = item.pathComponents ;
+        if (components.count > 1 && [components[1]  isEqualToString: @"Volumes"]) {
+                for (NSString *index in mLevel ){
+                    if (item.path isEqualToString:(disc_prefix + index)) {
                         switch index {
                         case "Math3-1":
-                            mLevel_name = "Math 3"
-                            mLevel_alias = "Math3"
-                            mLevel_disc = "Math3-1"
-                            mLevel_app_folder = "Math 3"
-                            mLevel_app = "Math3.app"
-                            mLevel_data_folder = "TT Math 3"
-                            mLevel_dat_file = "math3dat"
-                            mLevel_zip_file = "ttmath3mac.zip"
-                            foundDisc = true
-                            break
+                            mLevel_name = "Math 3";
+                            mLevel_alias = "Math3";
+                            mLevel_disc = "Math3-1";
+                            mLevel_app_folder = "Math 3";
+                            mLevel_app = "Math3.app";
+                            mLevel_data_folder = "TT Math 3";
+                            mLevel_dat_file = "math3dat";
+                            mLevel_zip_file = "ttmath3mac.zip";
+                            foundDisc = true;
+                            break;
                         case "Math4-1":
-                            mLevel_name = "Math 4"
-                            mLevel_alias = "Math4"
-                            mLevel_disc = "Math4-1"
-                            mLevel_app_folder = "Math 4"
-                            mLevel_app = "Math4.app"
-                            mLevel_data_folder = "TT Math 4"
-                            mLevel_dat_file = "math4dat"
-                            mLevel_zip_file = "ttmath4mac.zip"
-                            foundDisc = true
-                            break
+                            mLevel_name = "Math 4";
+                            mLevel_alias = "Math4";
+                            mLevel_disc = "Math4-1";
+                            mLevel_app_folder = "Math 4";
+                            mLevel_app = "Math4.app";
+                            mLevel_data_folder = "TT Math 4";
+                            mLevel_dat_file = "math4dat";
+                            mLevel_zip_file = "ttmath4mac.zip";
+                            foundDisc = true;
+                            break;
                         case "Math5-1":
-                            mLevel_name = "Math 5"
-                            mLevel_alias = "Math5"
-                            mLevel_disc = "Math5-1"
-                            mLevel_app_folder = "Math 5"
-                            mLevel_app = "Math5.app"
-                            mLevel_data_folder = "TT Math 5"
-                            mLevel_dat_file = "math5dat"
-                            mLevel_zip_file = "ttmath5mac.zip"
-                            foundDisc = true
-                            break
+                            mLevel_name = "Math 5";
+                            mLevel_alias = "Math5";
+                            mLevel_disc = "Math5-1";
+                            mLevel_app_folder = "Math 5";
+                            mLevel_app = "Math5.app";
+                            mLevel_data_folder = "TT Math 5";
+                            mLevel_dat_file = "math5dat";
+                            mLevel_zip_file = "ttmath5mac.zip";
+                            foundDisc = true;
+                            break;
                         case "Math6-1":
                             mLevel_name = "Math 6"
                             mLevel_alias = "Math6"
