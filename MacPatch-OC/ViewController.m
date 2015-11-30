@@ -233,6 +233,38 @@ NSString *loadMathData() {
     player_path = [[NSBundle mainBundle] pathForResource:@"mdm_flash_player" ofType:@""]; //Path something to mdm_flash_player
     //admin_check; //Current user is admin, returns the username. If not admin returns a "0"
     //***************************************
+    
+    //***************************************
+    //Admin Check
+    //***************************************
+    
+    //Example of string concat
+    // objLbl.stringValue = [NSString stringWithFormat:@"%@/%@/%@", @"Message: ", @"combined with - ", objTxt.stringValue];
+    
+    
+    NSTask *scriptTask = [[NSTask alloc] init]; //Initalize NSTask object
+    NSPipe *pipe; //Initalize NSPipe for returning shell script output
+    pipe = [NSPipe pipe];
+    [scriptTask setStandardOutput: pipe]; //Setting output to come from pipe object
+    [scriptTask setStandardError: pipe]; //Setting error output to come from pipe object
+    NSFileHandle *file; //Create file handle object to read from pipe
+    file = [pipe fileHandleForReading]; //Assign file object to pipe for reading
+    [scriptTask setLaunchPath: @"/bin/bash"]; //Set script launch path
+    [scriptTask setArguments:@[admin_sh_path]]; //Set arguments for script. Only require script path for this one
+    
+    [scriptTask launch]; //Lanuches task
+    NSData *data; //Initalizes data object to hold output from shell script
+    data = [file readDataToEndOfFile]; //Use file object to read to end of pipe file
+    NSString *string_output; //Create output string
+    string_output = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding]; //Fill output string with data
+    NSString *string_trimmed = [string_output stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]]; //Trim string to remove newline character set
+    
+    if ([string_trimmed  isEqual: @"0"]) {
+        showSimpleCriticalAlert(@"Admin Check", @"This can only be run from an administrator account!", true);
+    } else {
+        showSimpleCriticalAlert(@"Admin Check", @"You're an admin!", false);
+    }
+
 }
 
 - (IBAction)testBtn:(NSButton *)sender {
@@ -241,5 +273,22 @@ NSString *loadMathData() {
     
     
 }
+
+//***************************************
+//FUNCTION: Display alert message
+//***************************************
+void showSimpleCriticalAlert(NSString *title, NSString *msg,bool exitApp) {
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert addButtonWithTitle:@"OK"];
+    [alert setMessageText:title];
+    [alert setInformativeText:msg];
+    [alert setAlertStyle:NSCriticalAlertStyle];
+    [alert runModal];
+    if (exitApp) {
+        [[NSApplication sharedApplication] terminate:nil];
+    }
+}
+
+
 
 @end
