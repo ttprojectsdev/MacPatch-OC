@@ -94,7 +94,7 @@ BOOL foundDisc = false;
     if (isAdmin) {
         [self reloadData];
     } else {
-        showSimpleCriticalAlert(@"Admin Check", @"This can only be run from an administrator account!", true);//admin not logged in
+        showSimpleCriticalAlert(@"Admin Check", @"This can only be run from an administrator account! Please login to the administrator account and try again.", true);//admin not logged in
     }//end if
     //***************************************
     
@@ -106,15 +106,23 @@ BOOL foundDisc = false;
 //BUTTON: Will do the auto patch
 //***************************************
 - (IBAction)testBtn:(id)sender {
+    self.progressBar.doubleValue = 0;
     cleanInstall();
+    self.progressBar.doubleValue = 20;
     installFromDisc1();
+    self.progressBar.doubleValue = 40;
     processGradebook();
+    self.progressBar.doubleValue = 55;
     fixFlash();
+    self.progressBar.doubleValue = 70;
     if (isUpdateReady) {
         settingsUpdate();
+        self.progressBar.doubleValue = 85;
     }
     fixPermissions();
+    self.progressBar.doubleValue = 95;
     [self reloadData];
+    self.progressBar.doubleValue = 100;
 }//end testBtn
 //***************************************
 
@@ -404,7 +412,7 @@ void processGradebook(){
         if ( [[NSFileManager defaultManager] isReadableFileAtPath:discDataFolderPath]) {
             [[NSFileManager defaultManager] copyItemAtPath:discDataFolderPath toPath:dataFolderPath error:nil];//If disc is readable then copy datafolder
         } else { //If folder not readable
-            showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If to problem continues, contact customer support.", true); //If failed then prompt with disc read error
+            showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If the problem continues, contact customer support at (866)-867-6284.", true); //If failed then prompt with disc read error
         }//end readable if
     } else { //if data folder exists
         //check if gb dat file exists
@@ -412,7 +420,7 @@ void processGradebook(){
             if ( [[NSFileManager defaultManager] isReadableFileAtPath:discGbFilePath]) {
                 [[NSFileManager defaultManager] copyItemAtPath:discGbFilePath toPath:gbFilePath error:nil];//If disc is readable then copy gb dat file
             } else { //If file not readable
-                showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If to problem continues, contact customer support.", true); //If failed then prompt with disc read error
+                showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If the problem continues, contact customer support at (866)-867-6284.", true); //If failed then prompt with disc read error
             }//end readable if
         } else { //If it does exist
             isValidDatFile(gbFilePath, discGbFilePath);
@@ -423,7 +431,7 @@ void processGradebook(){
             if ( [[NSFileManager defaultManager] isReadableFileAtPath:discProgramDatPath]) {
                 [[NSFileManager defaultManager] copyItemAtPath:discProgramDatPath toPath:programDatPath error:nil];//If disc is readable then copy programdat file
             } else { //If file not readable
-                showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If to problem continues, contact customer support.", true); //If failed then prompt with disc read error
+                showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If the problem continues, contact customer support at (866)-867-6284.", true); //If failed then prompt with disc read error
             }//end readable if
         } else { //if it does exist
             isValidDatFile(programDatPath, discProgramDatPath);
@@ -495,7 +503,7 @@ void isValidDatFile(NSString *path, NSString *path_d) {
             [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
             [[NSFileManager defaultManager] copyItemAtPath:path toPath:path_d error:nil];//If disc is readable then copy dat file
         } else { //If file not readable
-            showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If to problem continues, contact customer support.", true); //If failed then prompt with disc read error
+            showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If the problem continues, contact customer support at (866)-867-6284.", true); //If failed then prompt with disc read error
         }//end readable if
     }//end file check size if
 }//end function
@@ -520,10 +528,10 @@ void isValidDatFile(NSString *path, NSString *path_d) {
         isUpdateReady = true;
         _SettingsUpdateBtn.enabled = true;
         if (checkVersion()) {
-            _settingsUpdateLabel.stringValue = @"Settings update has already been applied for this math level! It is not necessary to apply it again.";
+            _settingsUpdateLabel.stringValue = @"The settings update has already been applied for this math level! It is not necessary to apply it again.";
             settingsUpdateZip_path = [NSString stringWithFormat:@"%@%@%@", resource_path, @"/", mLevel_zip_file]; //Path to settings update zip: TODO Make into function. Redundant code
         } else {
-            _settingsUpdateLabel.stringValue = @"This math level is not up to date. To apply the settings menu update, click the [Settings Menu] button above! (Optional)";
+            _settingsUpdateLabel.stringValue = @"This math level is not up to date. To apply the settings update, click the [Settings Update] button above! (Optional)";
             settingsUpdateZip_path = [NSString stringWithFormat:@"%@%@%@", resource_path, @"/", mLevel_zip_file];
         }
     } else {

@@ -27,7 +27,6 @@
 		0A3017CA1C062A9800DBB93A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		0A3017CB1C062A9800DBB93A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		0A3017CD1C062A9800DBB93A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0A3017D01C062A9800DBB93A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0A3017D21C062A9800DBB93A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		42270E311C063D090047FBEA /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		42270E321C063D090047FBEA /* Person.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
@@ -35,6 +34,7 @@
 		423477901C065FFE00B156C3 /* Flash Player.plugin */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = "Flash Player.plugin"; sourceTree = "<group>"; };
 		423477921C06600F00B156C3 /* ttmath4mac.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = ttmath4mac.zip; sourceTree = "<group>"; };
 		423477941C06601F00B156C3 /* mdm_flash_player */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = mdm_flash_player; sourceTree = "<group>"; };
+		428DDE781C0DF28E0028B71E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,7 +133,6 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				Base,
 			);
 			mainGroup = 0A3017B81C062A9800DBB93A;
 			productRefGroup = 0A3017C21C062A9800DBB93A /* Products */;
@@ -179,7 +178,7 @@
 		0A3017CF1C062A9800DBB93A /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				0A3017D01C062A9800DBB93A /* Base */,
+				428DDE781C0DF28E0028B71E /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
