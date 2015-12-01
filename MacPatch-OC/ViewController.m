@@ -20,6 +20,7 @@
 //***************************************
 NSString *disc_prefix; //prefix to locate disc in drive
 NSString *bashPath; //Scripts are ran using bash
+NSString *resource_path; //Path to resource folder
 NSString *dataPath; //Path to data folders
 NSArray *mLevel; //array of expected math level disc 1 volumes
 NSString *patchID = @"Math 4";//identifies the settings update
@@ -30,6 +31,7 @@ bool isAdmin = false; //Admin check bool
 //Define Variables for paths
 //***************************************
 NSString *install_sh_path; //Path to shell script that unzips application files
+NSString *settingsUpdateZip_path; //Path to settings update .zip
 NSString *plugin_path; //Path to flash player plugin resource
 NSString *player_path; //Path something to mdm_flash_player
 NSString *admin_name; //If admin, holds admin user name
@@ -67,6 +69,7 @@ BOOL foundDisc = false;
     //***************************************
     //Define Variables for paths
     //***************************************
+    resource_path = [[NSBundle mainBundle] resourcePath]; //Path to resource folder
     install_sh_path = [[NSBundle mainBundle] pathForResource:@"cmd2" ofType:@"sh"]; //Path to shell script that unzips application files
     plugin_path = [[NSBundle mainBundle] pathForResource:@"Flash Player" ofType:@"plugin"]; //Path to flash player plugin resource
     player_path = [[NSBundle mainBundle] pathForResource:@"mdm_flash_player" ofType:@""]; //Path something to mdm_flash_player
@@ -93,6 +96,7 @@ BOOL foundDisc = false;
         if ([mLevel_name isEqualToString:patchID]) {
             _SettingsUpdateBtn.enabled = true;
             _settingsUpdateLabel.stringValue = @"Settings update patch is available for this math level!";
+            settingsUpdateZip_path = [NSString stringWithFormat:@"%@%@%@", resource_path, @"/", mLevel_zip_file]; //Path to settings update zip
         } else {
             _SettingsUpdateBtn.enabled = false;
             _settingsUpdateLabel.stringValue = @"Settings update is not available for this math level. Please download the correct patch from our website http://www.teachingtextbooks.com/updates";
@@ -261,6 +265,7 @@ void loadMathData() {
     if ([mLevel_name isEqualToString:patchID]) {
         _SettingsUpdateBtn.enabled = true;
         _settingsUpdateLabel.stringValue = @"Settings update patch is available for this math level!";
+        settingsUpdateZip_path = [NSString stringWithFormat:@"%@%@%@", resource_path, @"/", mLevel_zip_file]; //Path to settings update zip: TODO Make into function. Redundant code
     } else {
         _SettingsUpdateBtn.enabled = false;
         _settingsUpdateLabel.stringValue = @"Settings update is not available for this math level. Please download the correct patch from our website http://www.teachingtextbooks.com/updates";
@@ -336,6 +341,21 @@ void installFromDisc1() {
     NSTask *installTask = [[NSTask alloc] init];
     NSString *discZipFile = [NSString stringWithFormat:@"%@%@%@%@",@"/Volumes/",mLevel_disc, @"/", mLevel_zip_file];
    
+    [installTask setLaunchPath: @"/bin/bash"];
+    [installTask setArguments: @[install_sh_path, discZipFile, mLevel_app_folder, mLevel_app, mLevel_alias]];
+    [installTask launch];
+    [installTask waitUntilExit];
+}//end installFromDisc1
+//****************************************
+
+//****************************************
+//FUNCTION: Settings update
+//****************************************
+//manually installs the mac.zip file from the cd
+void settingsUpdate() {
+    NSTask *installTask = [[NSTask alloc] init];
+    NSString *discZipFile = [NSString stringWithFormat:@"%@%@%@%@",@"/Volumes/",mLevel_disc, @"/", mLevel_zip_file];
+    
     [installTask setLaunchPath: @"/bin/bash"];
     [installTask setArguments: @[install_sh_path, discZipFile, mLevel_app_folder, mLevel_app, mLevel_alias]];
     [installTask launch];
