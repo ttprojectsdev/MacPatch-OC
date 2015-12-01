@@ -14,7 +14,7 @@
 #include <pwd.h>
 #include <grp.h>
 @implementation ViewController
-
+//@synthesize MathLevelLabel;
 //***************************************
 //Define Constants
 //***************************************
@@ -22,9 +22,11 @@ NSString *disc_prefix; //prefix to locate disc in drive
 NSString *bashPath; //Scripts are ran using bash
 NSString *resource_path; //Path to resource folder
 NSString *dataPath; //Path to data folders
+NSString *admin_file_path; // Used the check if application is installed, and check version
 NSArray *mLevel; //array of expected math level disc 1 volumes
-NSString *patchID = @"Math 4";//identifies the settings update
+NSString *patchID = @"Math 5";//identifies the settings update
 bool isAdmin = false; //Admin check bool
+bool isUpdateReady = false; //Set to true when disc is matched to patch
 //***************************************
 
 //***************************************
@@ -50,7 +52,6 @@ NSString *mLevel_dat_file;
 NSString *mLevel_zip_file;
 BOOL foundDisc = false;
 //***************************************
-
 
 //***************************************
 //VIEW DID LOAD
@@ -81,7 +82,7 @@ BOOL foundDisc = false;
     uid_t current_user_id = getuid(); //Gets the user ID
     struct passwd *pwentry = getpwuid(current_user_id); //Gets PWD of user
     struct group *admin_group = getgrnam("admin"); //Sets group to check for
-    while(*admin_group->gr_mem != NULL) { //Loop through groups until end
+    while(*admin_group->gr_mem != nil) { //Loop through groups until end
         if (strcmp(pwentry->pw_name, *admin_group->gr_mem) == 0) {
             isAdmin = true; //if admin is listed, set boolean to true
             admin_name = [NSString stringWithFormat:@"%s", pwentry->pw_name];
@@ -91,17 +92,7 @@ BOOL foundDisc = false;
     
     //Checks isAdmin to validate admin group
     if (isAdmin) {
-        loadMathData();
-        _MathLevelLabel.stringValue = mLevel_name;
-        if ([mLevel_name isEqualToString:patchID]) {
-            _SettingsUpdateBtn.enabled = true;
-            _settingsUpdateLabel.stringValue = @"Settings update patch is available for this math level!";
-            settingsUpdateZip_path = [NSString stringWithFormat:@"%@%@%@", resource_path, @"/", mLevel_zip_file]; //Path to settings update zip
-        } else {
-            _SettingsUpdateBtn.enabled = false;
-            _settingsUpdateLabel.stringValue = @"Settings update is not available for this math level. Please download the correct patch from our website http://www.teachingtextbooks.com/updates";
-        }
-        
+        [self reloadData];
     } else {
         showSimpleCriticalAlert(@"Admin Check", @"This can only be run from an administrator account!", true);//admin not logged in
     }//end if
@@ -111,6 +102,39 @@ BOOL foundDisc = false;
 }//end view did load
 //***************************************
 
+//***************************************
+//BUTTON: Will do the auto patch
+//***************************************
+- (IBAction)testBtn:(id)sender {
+    cleanInstall();
+    installFromDisc1();
+    processGradebook();
+    fixFlash();
+    if (isUpdateReady) {
+        settingsUpdate();
+    }
+    fixPermissions();
+    [self reloadData];
+}//end testBtn
+//***************************************
+
+//***************************************
+//BUTTON: Reloads the data for views
+//***************************************
+- (IBAction)recheckBtn:(id)sender {
+    [self reloadData];
+}
+//***************************************
+
+//***************************************
+//BUTTON: Applies settings update
+//***************************************
+- (IBAction)SettingsUpdateBtn:(NSButton *)sender {
+    settingsUpdate();
+    fixPermissions();
+    [self reloadData];
+}
+//***************************************
 
 //***************************************
 //FUNCTION: Calls the loading of Math data
@@ -121,14 +145,12 @@ BOOL foundDisc = false;
 //***************************************
 BOOL checkMathDisc(){
     BOOL reslut = false;
-    
     loadMathData();
     if (foundDisc) {
         reslut = true;
     } else {
         reslut = false;
     }
-    
     return reslut;
 }
 //***************************************
@@ -245,44 +267,6 @@ void loadMathData() {
 }//end math level data function
 //***************************************
 
-
-//***************************************
-//BUTTON
-//***************************************
-- (IBAction)testBtn:(NSButton *)sender {
-    cleanInstall();
-    installFromDisc1();
-}//end testBtn
-//***************************************
-
-
-//***************************************
-//BUTTON
-//***************************************
-- (IBAction)recheckBtn:(NSButton *)sender {
-    loadMathData();
-    _MathLevelLabel.stringValue = mLevel_name;
-    if ([mLevel_name isEqualToString:patchID]) {
-        _SettingsUpdateBtn.enabled = true;
-        _settingsUpdateLabel.stringValue = @"Settings update patch is available for this math level!";
-        settingsUpdateZip_path = [NSString stringWithFormat:@"%@%@%@", resource_path, @"/", mLevel_zip_file]; //Path to settings update zip: TODO Make into function. Redundant code
-    } else {
-        _SettingsUpdateBtn.enabled = false;
-        _settingsUpdateLabel.stringValue = @"Settings update is not available for this math level. Please download the correct patch from our website http://www.teachingtextbooks.com/updates";
-    }
-}
-//***************************************
-
-
-//***************************************
-//BUTTON
-//***************************************
-- (IBAction)SettingsUpdateBtn:(NSButton *)sender {
-    
-}
-//***************************************
-
-
 //***************************************
 //FUNCTION: Display alert message
 //***************************************
@@ -341,7 +325,7 @@ void installFromDisc1() {
     NSTask *installTask = [[NSTask alloc] init];
     NSString *discZipFile = [NSString stringWithFormat:@"%@%@%@%@",@"/Volumes/",mLevel_disc, @"/", mLevel_zip_file];
    
-    [installTask setLaunchPath: @"/bin/bash"];
+    [installTask setLaunchPath: bashPath];
     [installTask setArguments: @[install_sh_path, discZipFile, mLevel_app_folder, mLevel_app, mLevel_alias]];
     [installTask launch];
     [installTask waitUntilExit];
@@ -353,13 +337,201 @@ void installFromDisc1() {
 //****************************************
 //manually installs the mac.zip file from the cd
 void settingsUpdate() {
-    NSTask *installTask = [[NSTask alloc] init];
-    NSString *discZipFile = [NSString stringWithFormat:@"%@%@%@%@",@"/Volumes/",mLevel_disc, @"/", mLevel_zip_file];
-    
-    [installTask setLaunchPath: @"/bin/bash"];
-    [installTask setArguments: @[install_sh_path, discZipFile, mLevel_app_folder, mLevel_app, mLevel_alias]];
-    [installTask launch];
-    [installTask waitUntilExit];
+    if (isUpdateReady) {
+        checkInstall();
+        NSTask *installTask = [[NSTask alloc] init];
+        [installTask setLaunchPath: bashPath];
+        [installTask setArguments: @[install_sh_path, settingsUpdateZip_path, mLevel_app_folder, mLevel_app, mLevel_alias]];
+        [installTask launch];
+        [installTask waitUntilExit];
+    }//end if
 }//end installFromDisc1
+//****************************************
+
+//****************************************
+//FUNCTION: Checks version of TT software.
+//Will aid customers on when to use the settings menu update
+//****************************************
+bool checkVersion() {
+    checkInstall();
+    NSFileManager *filemanager = [NSFileManager defaultManager];//Initalize filemanager
+    NSDate *file_created_Date = [[filemanager attributesOfItemAtPath:admin_file_path error:nil] fileCreationDate]; //gets file creation date
+    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:file_created_Date]; //Splits date up into components
+    NSInteger year = [components year]; //stores year in integer
+    if (year < 2014) {
+        return false;
+    } else {
+        return true;
+    }
+}
+//****************************************
+
+//****************************************
+//FUNCTION: Checks if math level is installed
+//before installing settings update
+//****************************************
+void checkInstall() {
+    NSFileManager *filemanager = [NSFileManager defaultManager];//Initalize filemanager
+    if ([filemanager fileExistsAtPath:admin_file_path] == false) {
+        installFromDisc1();
+        showSimpleCriticalAlert(@"First time run", @"TT Mac Patch has noticed that your software is not currently installed. This has been taken care of you automatically!", false);
+    }
+}
+//****************************************
+
+//****************************************
+//FUNCTION: Checks dat files and makes
+//sure working ones are in place
+//****************************************
+void processGradebook(){
+    NSString *dataFolderPath;
+    NSString *gbFilePath;
+    NSString *programDatPath;
+    NSString *discDataFolderPath;
+    NSString *discGbFilePath;
+    NSString *discProgramDatPath;
+    
+    dataFolderPath = [NSString stringWithFormat:@"%@%@", dataPath, mLevel_data_folder];
+    gbFilePath = [NSString stringWithFormat:@"%@%@%@", dataFolderPath, @"/", mLevel_dat_file];
+    programDatPath = [NSString stringWithFormat:@"%@%@", dataFolderPath, @"/programdat"];
+    
+    discDataFolderPath = [NSString stringWithFormat:@"%@%@%@%@", disc_prefix, mLevel_disc, @"/", mLevel_data_folder];
+    discGbFilePath = [NSString stringWithFormat:@"%@%@%@", discDataFolderPath, @"/", mLevel_dat_file];
+    discProgramDatPath = [NSString stringWithFormat:@"%@%@", discDataFolderPath, @"/programdat"];
+    
+    NSFileManager *filemanager = [NSFileManager defaultManager];//Initalize filemanager
+    if ([filemanager fileExistsAtPath:dataFolderPath] == false) { //Check if data folder exists
+        if ( [[NSFileManager defaultManager] isReadableFileAtPath:discDataFolderPath]) {
+            [[NSFileManager defaultManager] copyItemAtPath:discDataFolderPath toPath:dataFolderPath error:nil];//If disc is readable then copy datafolder
+        } else { //If folder not readable
+            showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If to problem continues, contact customer support.", true); //If failed then prompt with disc read error
+        }//end readable if
+    } else { //if data folder exists
+        //check if gb dat file exists
+        if ([filemanager fileExistsAtPath:gbFilePath] == false) { //Check if gb dat exists
+            if ( [[NSFileManager defaultManager] isReadableFileAtPath:discGbFilePath]) {
+                [[NSFileManager defaultManager] copyItemAtPath:discGbFilePath toPath:gbFilePath error:nil];//If disc is readable then copy gb dat file
+            } else { //If file not readable
+                showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If to problem continues, contact customer support.", true); //If failed then prompt with disc read error
+            }//end readable if
+        } else { //If it does exist
+            isValidDatFile(gbFilePath, discGbFilePath);
+        }//end exist if
+        
+        //check if programdat file exists
+        if ([filemanager fileExistsAtPath:programDatPath] == false) { //Check if programdat exists
+            if ( [[NSFileManager defaultManager] isReadableFileAtPath:discProgramDatPath]) {
+                [[NSFileManager defaultManager] copyItemAtPath:discProgramDatPath toPath:programDatPath error:nil];//If disc is readable then copy programdat file
+            } else { //If file not readable
+                showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If to problem continues, contact customer support.", true); //If failed then prompt with disc read error
+            }//end readable if
+        } else { //if it does exist
+            isValidDatFile(programDatPath, discProgramDatPath);
+        }//end exist if
+    }//end datafolder exist if
+}//end function
+//****************************************
+
+//****************************************
+//FUNCTION: Fix file permissions
+//****************************************
+void fixPermissions() {
+    NSString *target_file;
+    NSArray *target_directory;
+    
+    target_directory = @[[NSString stringWithFormat:@"%@%@", @"/Applications/Teaching Textbooks/", mLevel_app_folder], [NSString stringWithFormat:@"%@%@", @"/Users/Shared/", mLevel_data_folder]];
+    //Enumerate files
+    //Loop through paths to be considered in the file permission changes
+    for (NSString *t_dir in target_directory) {
+        NSDirectoryEnumerator *dirEnum =[[NSFileManager defaultManager] enumeratorAtPath:t_dir];
+        NSString *file; //Holds file name
+        
+        while (file = [dirEnum nextObject]) {//Loop through files
+            target_file = [NSString stringWithFormat:@"%@%@%@", t_dir, @"/", file];
+            NSDictionary *properties = [[NSFileManager defaultManager] attributesOfItemAtPath:target_file error:nil];
+            //Build permission object
+            NSMutableDictionary *newProperties = [NSMutableDictionary dictionaryWithDictionary:properties];
+            [newProperties setObject:[NSNumber numberWithInt:511] forKey:NSFilePosixPermissions];
+            
+            //Set attributes
+            [[NSFileManager defaultManager] setAttributes:newProperties ofItemAtPath:target_file error:nil];
+        }//End while
+    }//end for
+}//End function
+//****************************************
+
+//****************************************
+//FUNCTION: Settings update
+//****************************************
+void fixFlash() {
+    NSString *localContentsPath;
+    NSString *localPlayerPath;
+    NSString *localPluginPath;
+    //Initalize strings to hold local paths
+    localContentsPath = [NSString stringWithFormat:@"%@%@%@%@%@", @"/Applications/Teaching Textbooks/", mLevel_app_folder, @"/", mLevel_app, @"/Contents/"];
+    localPlayerPath = [NSString stringWithFormat:@"%@%@", localContentsPath, @"MacOS/mdm_flash_player"];
+    localPluginPath = [NSString stringWithFormat:@"%@%@", localContentsPath, @"Resources/Flash Player.plugin"];
+
+    //Removing old files
+    [[NSFileManager defaultManager] removeItemAtPath:localPlayerPath error:nil];
+    [[NSFileManager defaultManager] removeItemAtPath:localPluginPath error:nil];
+    
+    //Copy new files
+    [[NSFileManager defaultManager] copyItemAtPath:player_path toPath:localPlayerPath error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:plugin_path toPath:localPluginPath error:nil];
+    
+}
+//****************************************
+
+//****************************************
+//FUNCTION: checks file sizes
+//****************************************
+void isValidDatFile(NSString *path, NSString *path_d) {
+    uint64_t fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
+    //Checking on dat file
+    //fileSize = [fileAttributes objectForKey:NSFileSize];
+    if (fileSize < 4096) {
+        if ( [[NSFileManager defaultManager] isReadableFileAtPath:path_d]) {
+            [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+            [[NSFileManager defaultManager] copyItemAtPath:path toPath:path_d error:nil];//If disc is readable then copy dat file
+        } else { //If file not readable
+            showSimpleCriticalAlert(@"Disc Read Error", @"There was a problem reading the data on your Disc 1. Please clean your disc and try again. If to problem continues, contact customer support.", true); //If failed then prompt with disc read error
+        }//end readable if
+    }//end file check size if
+}//end function
+//****************************************
+
+//****************************************
+//FUNCTION: Reloads data
+//****************************************
+- (id) init{ //initalize methods from header
+    self.MathLevelLabel = [[NSTextField alloc] init];
+    self.settingsUpdateLabel = [[NSTextField alloc] init];
+    self.SettingsUpdateBtn = [[NSButton alloc] init];
+    return self;
+}
+
+- (void) reloadData {
+    loadMathData();
+    _MathLevelLabel.stringValue = mLevel_name;
+    admin_file_path = [NSString stringWithFormat:@"%@%@%@", @"/Applications/Teaching Textbooks/",mLevel_app_folder, @"/Asset/Admin"]; //location of admin swf
+
+    if ([mLevel_name isEqualToString:patchID]) {
+        isUpdateReady = true;
+        _SettingsUpdateBtn.enabled = true;
+        if (checkVersion()) {
+            _settingsUpdateLabel.stringValue = @"Settings update has already been applied for this math level! It is not necessary to apply it again.";
+            settingsUpdateZip_path = [NSString stringWithFormat:@"%@%@%@", resource_path, @"/", mLevel_zip_file]; //Path to settings update zip: TODO Make into function. Redundant code
+        } else {
+            _settingsUpdateLabel.stringValue = @"This math level is not up to date. To apply the settings menu update, click the [Settings Menu] button above! (Optional)";
+            settingsUpdateZip_path = [NSString stringWithFormat:@"%@%@%@", resource_path, @"/", mLevel_zip_file];
+        }
+    } else {
+        isUpdateReady = false;
+        _SettingsUpdateBtn.enabled = false;
+        _settingsUpdateLabel.stringValue = @"Settings update is not available for this math level. Please download the correct patch from our website http://www.teachingtextbooks.com/updates";
+    }
+
+}//end function
 //****************************************
 @end

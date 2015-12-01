@@ -11,13 +11,18 @@
 
 @interface ViewController : NSViewController
 
-@property (weak) IBOutlet NSTextField *MathLevelLabel;
+@property (strong) IBOutlet NSTextField *MathLevelLabel;
 
-@property (weak) IBOutlet NSTextField *settingsUpdateLabel;
+@property (strong) IBOutlet NSTextField *settingsUpdateLabel;
 
 @property (weak) IBOutlet NSProgressIndicator *progressBar;
 
-@property (weak) IBOutlet NSButton *SettingsUpdateBtn;
+@property (strong) IBOutlet NSButton *SettingsUpdateBtn;
+- (id) init;
+- (void)reloadData;
+- (IBAction)recheckBtn: (id)sender;
+- (IBAction)SettingsUpdateBtn: (id)sender;
+- (IBAction)testBtn: (id)sender;
 
 @end
 

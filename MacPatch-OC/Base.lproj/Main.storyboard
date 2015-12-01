@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -674,9 +674,9 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eRh-oZ-pBC">
-                                <rect key="frame" x="19" y="57" width="66" height="32"/>
+                                <rect key="frame" x="189" y="41" width="113" height="32"/>
                                 <animations/>
-                                <buttonCell key="cell" type="push" title="Test" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NpH-As-IPb">
+                                <buttonCell key="cell" type="push" title="Run Fix" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NpH-As-IPb">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -685,16 +685,16 @@
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="22Q-k2-rKt">
-                                <rect key="frame" x="142" y="207" width="149" height="17"/>
+                                <rect key="frame" x="11" y="230" width="80" height="17"/>
                                 <animations/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Math Level Being Fixed:" id="anD-RS-Dfu">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Math Level:" id="anD-RS-Dfu">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YJd-DG-jxM">
-                                <rect key="frame" x="317" y="207" width="145" height="17"/>
+                                <rect key="frame" x="95" y="230" width="95" height="17"/>
                                 <animations/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="mOw-bE-sza">
                                     <font key="font" metaFont="system"/>
@@ -702,12 +702,8 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="nMc-jy-QTw">
-                                <rect key="frame" x="25" y="25" width="440" height="20"/>
-                                <animations/>
-                            </progressIndicator>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t9e-GN-xDd">
-                                <rect key="frame" x="14" y="196" width="81" height="32"/>
+                                <rect key="frame" x="200" y="221" width="81" height="32"/>
                                 <animations/>
                                 <buttonCell key="cell" type="push" title="Recheck" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="6X8-Tr-ycH">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -727,9 +723,9 @@
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y6i-ny-yY6">
-                                <rect key="frame" x="14" y="149" width="129" height="32"/>
+                                <rect key="frame" x="7" y="154" width="170" height="32"/>
                                 <animations/>
-                                <buttonCell key="cell" type="push" title="Settings Update" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bf1-Yd-YWa">
+                                <buttonCell key="cell" type="push" title="Install Settings Update" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bf1-Yd-YWa">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -737,6 +733,10 @@
                                     <action selector="SettingsUpdateBtn:" target="XfG-lQ-9wD" id="Kk1-P9-CUn"/>
                                 </connections>
                             </button>
+                            <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="nMc-jy-QTw">
+                                <rect key="frame" x="25" y="19" width="440" height="20"/>
+                                <animations/>
+                            </progressIndicator>
                         </subviews>
                         <animations/>
                     </view>
