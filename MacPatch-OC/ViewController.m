@@ -24,7 +24,7 @@ NSString *resource_path; //Path to resource folder
 NSString *dataPath; //Path to data folders
 NSString *admin_file_path; // Used the check if application is installed, and check version
 NSArray *mLevel; //array of expected math level disc 1 volumes
-NSString *patchID = @"Math 5";//identifies the settings update
+NSString *patchID = @"Math 4";//identifies the settings update
 bool isAdmin = false; //Admin check bool
 bool isUpdateReady = false; //Set to true when disc is matched to patch
 //***************************************
